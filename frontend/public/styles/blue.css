@@ -1,0 +1,6 @@
+html[data-theme="bleed-blue"] {
+    --color-primary: #3C7B90;
+    --color-back: #528fa3;
+    --color-secondary: #719EAD;
+    --color-muted: #C5DEE7;
+}

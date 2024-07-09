@@ -35,4 +35,9 @@ public class UserRestController {
         User dbUser = userService.save(user);
         return dbUser;
     }
+
+    @GetMapping("/user/exists")
+    public int userExists(@RequestParam("email") String email){
+        return userService.findUserByEmailAddress(email);
+    }
 }

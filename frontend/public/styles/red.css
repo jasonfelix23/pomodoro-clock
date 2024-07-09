@@ -1,0 +1,6 @@
+html[data-theme="scary-red"] {
+    --color-primary: #B44143;
+    --color-back: #BD4749;
+    --color-secondary: #c45a5c;
+    --color-muted: #D99697;
+}

@@ -45,4 +45,10 @@ public class UserServiceImpl implements UserService{
     public void DeleteById(int id) {
         userRepository.deleteById(id);
     }
+
+    @Override
+    public int findUserByEmailAddress(String emailAddress) {
+        Optional<User> result = userRepository.findUserByEmailAddress(emailAddress);
+        return result.map(User::getId).orElse(-1);
+    }
 }

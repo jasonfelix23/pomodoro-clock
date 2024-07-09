@@ -1,0 +1,6 @@
+html[data-theme="grassy-green"] {
+    --color-primary: #4c956c;
+    --color-back: #4c956c;
+    --color-secondary: #78BA95;
+    --color-muted: #B7D7D0;
+}
