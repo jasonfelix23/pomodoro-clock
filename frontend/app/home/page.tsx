@@ -46,7 +46,7 @@ const page = () => {
   return (
     <div className='mx-auto w-full lg:w-1/2 md:w-3/4'>
       <Header />
-      <Clock />
+      <Clock pomoSessionDuration={pomoUser? pomoUser.pomoSessionDuration: 25} pomoSessionBreak={pomoUser ? pomoUser.pomoSessionBreak : 5}/>
       {pomoUser && <h1 className='p-4'>{pomoUser.firstName}</h1>}
     </div>
   )

@@ -6,9 +6,15 @@ import Timer from './Timer';
 
 const themes = ['scary-red', 'grassy-green', 'bleed-blue'];
 
-const Clock = () => {
+const Clock = ({pomoSessionDuration, pomoSessionBreak} : {pomoSessionDuration: number, pomoSessionBreak: number}) => {
   const [userState, setUserState] = useState<number>(0);
+  const [expiryTimestamp, setExpiryTimeStamp] = useState<Date>(()=>{
+    const time = new Date();
+    time.setSeconds(time.getSeconds() + pomoSessionDuration*60);
+    return time;
+  });
 
+  const [resetTimer, setResetTimer] = useState<number>(pomoSessionDuration*60);
 
   const handleUserState = (index: number) => {
     if (index === userState) {
@@ -18,8 +24,20 @@ const Clock = () => {
     setUserState(index);
   };
 
-  const time = new Date();
-  time.setSeconds(time.getSeconds() + 600); // 10 minutes timer
+  useEffect(() => {
+    const time = new Date();
+    let slag = 0;
+    if(userState == 0)
+      slag = pomoSessionDuration*60 
+    else if(userState == 1)
+      slag = pomoSessionBreak*60;
+    else
+      slag = pomoSessionBreak*60*3;
+    time.setSeconds(time.getSeconds() + slag);
+    
+    setResetTimer(slag);
+    setExpiryTimeStamp(time);
+  }, [userState])
 
 
   return (
@@ -45,7 +63,7 @@ const Clock = () => {
             Long Break
           </Button>
         </div>
-        <Timer expiryTimestamp={time}/>
+        <Timer expiryTimestamp={expiryTimestamp} handleUserState={handleUserState} userState={userState} slag={resetTimer}/>
       </div>
     </main>
   );
