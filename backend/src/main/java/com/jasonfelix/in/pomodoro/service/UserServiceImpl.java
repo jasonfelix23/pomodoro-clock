@@ -51,4 +51,18 @@ public class UserServiceImpl implements UserService{
         Optional<User> result = userRepository.findUserByEmailAddress(emailAddress);
         return result.map(User::getId).orElse(-1);
     }
+
+    @Override
+    public boolean updateUser(User user) {
+        Optional<User> result = userRepository.findById(user.getId());
+        if(result.isPresent()){
+            User updatedUser = result.get();
+            updatedUser.setPomoSessionBreak(user.getPomoSessionBreak());
+            updatedUser.setPomoSessionDuration(user.getPomoSessionDuration());
+
+            userRepository.save(updatedUser);
+            return true;
+        }
+        return false;
+    }
 }

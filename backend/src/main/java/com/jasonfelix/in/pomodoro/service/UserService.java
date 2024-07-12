@@ -11,4 +11,5 @@ public interface UserService {
     User save(User user);
     void DeleteById(int id);
     int findUserByEmailAddress(String emailAddress);
+    boolean updateUser(User user);
 }

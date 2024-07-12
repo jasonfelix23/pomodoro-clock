@@ -8,12 +8,7 @@ const themes = ['scary-red', 'grassy-green', 'bleed-blue'];
 
 const Clock = ({pomoSessionDuration, pomoSessionBreak} : {pomoSessionDuration: number, pomoSessionBreak: number}) => {
   const [userState, setUserState] = useState<number>(0);
-  const [expiryTimestamp, setExpiryTimeStamp] = useState<Date>(()=>{
-    const time = new Date();
-    time.setSeconds(time.getSeconds() + pomoSessionDuration*60);
-    return time;
-  });
-
+  const [expiryTimestamp, setExpiryTimeStamp] = useState<Date>(new Date());
   const [resetTimer, setResetTimer] = useState<number>(pomoSessionDuration*60);
 
   const handleUserState = (index: number) => {
@@ -28,21 +23,21 @@ const Clock = ({pomoSessionDuration, pomoSessionBreak} : {pomoSessionDuration: n
     const time = new Date();
     let slag = 0;
     if(userState == 0)
-      slag = pomoSessionDuration*60 
+      slag = pomoSessionDuration
     else if(userState == 1)
-      slag = pomoSessionBreak*60;
+      slag = pomoSessionBreak;
     else
-      slag = pomoSessionBreak*60*3;
+      slag = pomoSessionBreak;
     time.setSeconds(time.getSeconds() + slag);
     
     setResetTimer(slag);
     setExpiryTimeStamp(time);
-  }, [userState])
+  }, [userState, pomoSessionBreak, pomoSessionDuration])
 
 
   return (
-    <main className='p-4 mx-auto bg-secondary w-4/5 rounded-md'>
-      <div className='container flex flex-col gap-2 items-center'>
+    <main className='p-4 mx-auto bg-secondary w-4/5 xl:w-3/5 rounded-md'>
+      <div className='container flex flex-col gap-2 items-center pb-4'>
         <div className='flex flex-wrap gap-2'>
           <Button
             className={`text-sm ${userState === 0 ? 'bg-primary text-secondary' : 'bg-transparent'}`}
@@ -63,7 +58,7 @@ const Clock = ({pomoSessionDuration, pomoSessionBreak} : {pomoSessionDuration: n
             Long Break
           </Button>
         </div>
-        <Timer expiryTimestamp={expiryTimestamp} handleUserState={handleUserState} userState={userState} slag={resetTimer}/>
+        <Timer expiryTimestamp={expiryTimestamp} handleUserState={handleUserState} userState={userState} slag={resetTimer} />
       </div>
     </main>
   );

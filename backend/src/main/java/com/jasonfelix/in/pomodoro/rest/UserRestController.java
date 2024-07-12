@@ -29,15 +29,20 @@ public class UserRestController {
         return user;
     }
 
-    @PostMapping("/user")
+    @PostMapping("/users")
     public User save(@RequestBody User user){
         user.setId(0);
         User dbUser = userService.save(user);
         return dbUser;
     }
 
-    @GetMapping("/user/exists")
+    @GetMapping("/users/exists")
     public int userExists(@RequestParam("email") String email){
         return userService.findUserByEmailAddress(email);
+    }
+
+    @PutMapping("/users")
+    public boolean updateUserSettings(@RequestBody User user) {
+        return userService.updateUser(user);
     }
 }

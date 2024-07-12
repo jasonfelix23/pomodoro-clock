@@ -33,6 +33,29 @@ export async function postToAPI<T, R>(endpoint: string, data: T): Promise<ApiRes
     }
 }
 
+async function putToAPI<T>(endpoint:string, data: T): Promise<ApiResponse<Boolean>>{
+    const url = `${API_BASE_URL}/${endpoint}`;
+    try{
+        const credentials = btoa(`${process.env.NEXT_PUBLIC_API_USERNAME}:${process.env.NEXT_PUBLIC_API_PASSWORD}`);
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Basic ${credentials}`,
+                'Content-Type': 'application/json' // Specify content type as JSON
+            },
+            body: JSON.stringify(data) // Convert data to JSON string
+        });
+        if(!response.ok){
+            throw new Error('Failed to update data');
+        }
+
+        return {status: response.status, data: response.ok? true: false};
+    }catch(e){
+        console.error(`Error fetch ${endpoint}: `, e);
+        throw e;
+    }
+}
+
 
 async function getFromAPI<T>(endpoint: string): Promise<ApiResponse<T>> {
     const url = `${API_BASE_URL}/${endpoint}`;
@@ -69,7 +92,7 @@ export async function ping(): Promise<ApiResponse<String>>{
 }
 
 export async function checkIfUserExists(userEmail: String): Promise<ApiResponse<Number>>{
-    return getFromAPI<Number>(`v1/user/exists?email=${userEmail}`);
+    return getFromAPI<Number>(`v1/users/exists?email=${userEmail}`);
 }
 
 export async function getUserData(id: Number): Promise<ApiResponse<User>>{
@@ -78,5 +101,9 @@ export async function getUserData(id: Number): Promise<ApiResponse<User>>{
 
 export async function createUser(email: string, name: string): Promise<ApiResponse<User>>{
     const userData: User = {firstName: name, emailAddress: email, pomoSessionDuration: 25, pomoSessionBreak: 5};
-    return postToAPI<User, User>('v1/user', userData);
+    return postToAPI<User, User>('v1/users', userData);
 }
+
+export async function updateUserSettings(user: User): Promise<ApiResponse<Boolean>>{
+    return putToAPI<User>('v1/users', user);
+} 
