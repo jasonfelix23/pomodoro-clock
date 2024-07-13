@@ -3,14 +3,19 @@ import { Column, Id } from "./TaskManager";
 import { CircleCheck, Trash2Icon } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 interface Props {
   column: Column;
   deleteColumn: (id: Id) => void;
+  updateColumn: (id: Id, title: string) => void;
 }
 
 function TaskContainer(props: Props) {
-  const { column, deleteColumn } = props;
+  const { column, deleteColumn, updateColumn } = props;
+  const [editMode, setEditMode] = useState(false);
+  const [completed, setCompleted] = useState(false);
 
   const {
     setNodeRef,
@@ -25,6 +30,7 @@ function TaskContainer(props: Props) {
       type: "Column",
       column,
     },
+    disabled: editMode,
   });
 
   const style = {
@@ -69,14 +75,43 @@ function TaskContainer(props: Props) {
         text-md h-[60px] cursor-grab rounded p-3 font-bold border-l-black border-l-4"
       >
         <div className="flex gap-1 text-gray-500">
-          <div
-            className="flex justify-center
-        items-center px-2 py-1
-        text-sm rounded-full"
+          <Button
+            className={`${completed ? "text-primary" : "text-gray-500"}
+                hover:text-primary
+                bg-transparent
+                rounded`}
+            onClick={() => setCompleted(!completed)}
           >
-            <CircleCheck className="bg-transparent" size={20} />
+            <CircleCheck
+              className="mx-2 my-1 cursor-pointer bg-transparent font-bold"
+              size={20}
+            />
+          </Button>
+          <div
+            onClick={() => {
+              setEditMode(true);
+            }}
+          >
+            {!editMode && completed && (
+              <p className="line-through decoration-2 py-2">{column.title}</p>
+            )}
+            {!editMode && !completed && <p className="py-2">{column.title}</p>}
+
+            {editMode && (
+              <Input
+                className="bg-white/75 outline-none px-2"
+                autoFocus
+                onChange={(e) => updateColumn(column.id, e.target.value)}
+                onBlur={() => {
+                  setEditMode(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key !== "Enter") return;
+                  setEditMode(false);
+                }}
+              />
+            )}
           </div>
-          {column.title}
         </div>
         <Button
           className="

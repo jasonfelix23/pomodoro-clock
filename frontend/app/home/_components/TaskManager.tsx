@@ -68,6 +68,7 @@ const TaskManager = () => {
                     key={column.id}
                     column={column}
                     deleteColumn={deleteColumn}
+                    updateColumn={updateColumn}
                   />
                 ))}
               </SortableContext>
@@ -79,6 +80,7 @@ const TaskManager = () => {
                   <TaskContainer
                     column={activeColumn}
                     deleteColumn={deleteColumn}
+                    updateColumn={updateColumn}
                   />
                 )}
               </DragOverlay>,
@@ -128,6 +130,15 @@ const TaskManager = () => {
   function deleteColumn(id: Id) {
     const filteredColumns = columns.filter((col) => col.id !== id);
     setColumns(filteredColumns);
+  }
+
+  function updateColumn(id: Id, title: string) {
+    const newColumns = columns.map((col) => {
+      if (col.id !== id) return col;
+      return { ...col, title };
+    });
+
+    setColumns(newColumns);
   }
 
   function onDragStart(event: DragStartEvent) {

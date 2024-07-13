@@ -89,8 +89,8 @@ const Page = () => {
   }, [pomoSessionBreak, pomoSessionDuration]);
 
   return (
-    <div className="mx-auto w-full lg:w-1/2 md:w-3/4">
-      <Header
+    <div className="mx-auto w-full lg:w-1/2 md:w-3/4 flex flex-col gap-2">
+      {/* <Header
         pd={pomoSessionDuration}
         pb={pomoSessionBreak}
         setPD={handlePDChange}
@@ -99,8 +99,9 @@ const Page = () => {
       <Clock
         pomoSessionDuration={pomoSessionDuration}
         pomoSessionBreak={pomoSessionBreak}
-      />
+      /> */}
       {pomoUser && <h1 className="p-4">{pomoUser.firstName}</h1>}
+      {!pomoUser && <h1 className="p-4">user</h1>}
       <TaskManager />
     </div>
   );
