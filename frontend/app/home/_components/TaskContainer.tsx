@@ -10,12 +10,12 @@ interface Props {
   column: Column;
   deleteColumn: (id: Id) => void;
   updateColumn: (id: Id, title: string) => void;
+  taskCompleted: (id: Id, completed: boolean) => void;
 }
 
 function TaskContainer(props: Props) {
-  const { column, deleteColumn, updateColumn } = props;
+  const { column, deleteColumn, updateColumn, taskCompleted } = props;
   const [editMode, setEditMode] = useState(false);
-  const [completed, setCompleted] = useState(false);
 
   const {
     setNodeRef,
@@ -30,7 +30,7 @@ function TaskContainer(props: Props) {
       type: "Column",
       column,
     },
-    disabled: editMode,
+    disabled: column.completed,
   });
 
   const style = {
@@ -76,11 +76,11 @@ function TaskContainer(props: Props) {
       >
         <div className="flex gap-1 text-gray-500">
           <Button
-            className={`${completed ? "text-primary" : "text-gray-500"}
+            className={`${column.completed ? "text-primary" : "text-gray-500"}
                 hover:text-primary
                 bg-transparent
                 rounded`}
-            onClick={() => setCompleted(!completed)}
+            onClick={() => taskCompleted(column.id, column.completed)}
           >
             <CircleCheck
               className="mx-2 my-1 cursor-pointer bg-transparent font-bold"
@@ -92,10 +92,12 @@ function TaskContainer(props: Props) {
               setEditMode(true);
             }}
           >
-            {!editMode && completed && (
+            {!editMode && column.completed && (
               <p className="line-through decoration-2 py-2">{column.title}</p>
             )}
-            {!editMode && !completed && <p className="py-2">{column.title}</p>}
+            {!editMode && !column.completed && (
+              <p className="py-2">{column.title}</p>
+            )}
 
             {editMode && (
               <Input

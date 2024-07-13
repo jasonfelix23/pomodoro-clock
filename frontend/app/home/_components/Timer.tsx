@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useTimer } from "react-timer-hook";
 import { BsSkipForwardFill } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,17 @@ const Timer = ({
   const [isStarted, setIsStarted] = useState(false);
   const [pomodoroCount, setPomodoroCount] = useState<number>(0);
 
+  const playSound = () => {
+    const audio = new Audio("fphone.mp3");
+    audio.play();
+  };
+
+  useEffect(() => {
+    document.title = `${String(minutes).padStart(2, "0")}:${String(
+      seconds
+    ).padStart(2, "0")} - Time for ${userState == 1 ? "focus" : "break"}`;
+  }, [minutes, seconds]);
+
   useEffect(() => {
     restart(expiryTimestamp, false);
   }, [expiryTimestamp]);
@@ -58,33 +69,32 @@ const Timer = ({
     } else {
       handleUserState(0);
     }
-
-    // handleUserState((userState+1)%3);
+    playSound();
   };
 
   return (
     <div className="w-full">
       <h2 className="text-[72px] md:text-[96px] font-semibold text-center">
-        {minutes}: {seconds}
+        {String(minutes).padStart(2, "0")}: {String(seconds).padStart(2, "0")}
       </h2>
       <div className="relative w-full flex justify-center items-center">
         {!isStarted ? (
           <Button
-            className="bg-primary text-[20px] md:text-[24px] lg:text-[36px] font-semibold p-4 md:p-4 lg:p-6 xl:p-8 text-secondary"
+            className="bg-white/75 text-[20px] md:text-[24px] lg:text-[36px] font-semibold p-4 md:p-4 lg:p-6 xl:p-8 text-secondary"
             onClick={handleStartClick}
           >
             Start
           </Button>
         ) : isRunning ? (
           <Button
-            className="bg-primary text-[20px] md:text-[24px] lg:text-[36px] font-semibold p-4 md:p-4 lg:p-6 xl:p-8 text-secondary"
+            className="bg-white/75 text-[20px] md:text-[24px] lg:text-[36px] font-semibold p-4 md:p-4 lg:p-6 xl:p-8 text-secondary"
             onClick={pause}
           >
             Pause
           </Button>
         ) : (
           <Button
-            className="bg-primary text-[20px] md:text-[24px] lg:text-[36px] font-semibold p-4 md:p-4 lg:p-6 xl:p-8 text-secondary"
+            className="bg-white/75 text-[20px] md:text-[24px] lg:text-[36px] font-semibold p-4 md:p-4 lg:p-6 xl:p-8 text-secondary"
             onClick={resume}
           >
             Start

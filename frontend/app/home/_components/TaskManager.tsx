@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { PlusCircleIcon } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import { EllipsisVertical, PlusCircleIcon, Trash, Trash2 } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
 import TaskContainer from "./TaskContainer";
 import {
   DndContext,
@@ -14,19 +14,30 @@ import {
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import { Separator } from "@/components/ui/separator";
+import {
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
+import { DropdownMenu, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 export type Id = string | number;
 export type Column = {
   id: Id;
   title: string;
+  completed: boolean;
 };
 
 const TaskManager = () => {
-  const [columns, setColumns] = useState<Column[]>([]);
+  const [columns, setColumns] = useState<Column[]>(() => {
+    const savedColumns = localStorage.getItem("TaskArray");
+    return savedColumns ? JSON.parse(savedColumns) : [];
+  });
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
   console.log(columns);
 
   const [activeColumn, setActivColumn] = useState<Column | null>(null);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -34,12 +45,45 @@ const TaskManager = () => {
       },
     })
   );
+
+  useEffect(() => {
+    localStorage.setItem("TaskArray", JSON.stringify(columns));
+  }, [columns]);
+
   return (
     <div className="m-auto flex flex-col gap-2 w-4/5 xl:w-3/5">
-      <div>
-        <h2>Tasks</h2>
-        <Separator className="my-2 bg-secondary" />
+      <div className="mx-2 mt-4 flex justify-between">
+        <h2 className="text-md font-semibold text-white p-2">Tasks</h2>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              className="p-2 
+          hover:text-primary hover:bg-muted"
+            >
+              <EllipsisVertical size={20} className="" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="bg-white/75 text-gray-500">
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                className="hover:bg-white hover:ring-1 hover:text-black"
+                onClick={clearCompletedColumns}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                <span>Clear finished tasks</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="hover:bg-white hover:ring-1 hover:text-black"
+                onClick={clearAllColumns}
+              >
+                <Trash className="mr-2 h-4 w-4" />
+                <span>Clear All tasks</span>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
+      <Separator className="mb-2 bg-secondary" />
 
       <div
         className="
@@ -69,6 +113,7 @@ const TaskManager = () => {
                     column={column}
                     deleteColumn={deleteColumn}
                     updateColumn={updateColumn}
+                    taskCompleted={taskCompleted}
                   />
                 ))}
               </SortableContext>
@@ -81,6 +126,7 @@ const TaskManager = () => {
                     column={activeColumn}
                     deleteColumn={deleteColumn}
                     updateColumn={updateColumn}
+                    taskCompleted={taskCompleted}
                   />
                 )}
               </DragOverlay>,
@@ -117,7 +163,8 @@ const TaskManager = () => {
   function createNewColumn() {
     const columnsToAdd: Column = {
       id: generateId(),
-      title: `Column ${columns.length + 1}`,
+      title: `Task ${columns.length + 1}`,
+      completed: false,
     };
 
     setColumns([...columns, columnsToAdd]);
@@ -139,6 +186,23 @@ const TaskManager = () => {
     });
 
     setColumns(newColumns);
+  }
+  function taskCompleted(id: Id, completed: boolean) {
+    const newColumns = columns.map((col) => {
+      if (col.id !== id) return col;
+      return { ...col, completed: !completed };
+    });
+
+    setColumns(newColumns);
+  }
+
+  function clearCompletedColumns() {
+    const filteredColumns = columns.filter((col) => col.completed !== true);
+    setColumns(filteredColumns);
+  }
+
+  function clearAllColumns() {
+    setColumns([]);
   }
 
   function onDragStart(event: DragStartEvent) {
