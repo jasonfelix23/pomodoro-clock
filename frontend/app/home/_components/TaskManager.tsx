@@ -34,7 +34,6 @@ const TaskManager = () => {
     return savedColumns ? JSON.parse(savedColumns) : [];
   });
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
-  console.log(columns);
 
   const [activeColumn, setActivColumn] = useState<Column | null>(null);
 

@@ -74,7 +74,6 @@ const Page = () => {
       setPomoUser(updatedUser);
       setPomoSessionDuration(newPD);
       setPomoSessionBreak(newPB);
-      console.log(newPD, newPB);
       const updated = await updateUserSettings(updatedUser); // Ensure id is not undefined
     }
   };

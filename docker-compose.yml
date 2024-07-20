@@ -12,6 +12,14 @@ services:
     depends_on:
       - postgres
 
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: dockerfile
+    ports:
+      - "3000:3000"
+
   postgres:
     container_name: postgres
     build:
