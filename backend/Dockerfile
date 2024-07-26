@@ -13,7 +13,7 @@ COPY pom.xml .
 COPY src ./src
 
 # # Build the application
-RUN mvn clean install
+RUN mvn clean install -DskipTests
 
 # Second stage: Use a smaller base image with just the JRE
 FROM amazoncorretto:22-jdk
@@ -22,7 +22,7 @@ FROM amazoncorretto:22-jdk
 WORKDIR /app
 
 # Copy the built JAR file from the build stage
-COPY target/pomodoro-0.0.1-SNAPSHOT.jar backend.jar
+COPY --from=build /app/target/pomodoro-0.0.1-SNAPSHOT.jar backend.jar
 
 
 RUN mkdir -p /app/libs && \
